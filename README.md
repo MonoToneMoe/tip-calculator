@@ -5,6 +5,10 @@ I created two functions, one to read your inputs and outputs the calculations of
 Peer Reviewed by: Ellie
 Peer Review: 
 
+The website functions well, all math is correct! Very similar to the original design.
+I believe the tip buttons should remain highlighted with the ones you've selected so you can see which percentage is selected.
+Design wise, some of the text appears kind of small in comparison with the original design, like the tip, bill, and people labels, the reset button should also be capital and probably larger. Though these are small details and the rest of the site is still good. Good job
+
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
