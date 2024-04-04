@@ -24,6 +24,7 @@ const config: Config = {
       'inputText': '#00494d',
       'inputPlaceholder': '#9EBBBD',
       'invis': 'transparent',
+      'amount': '#26c0ab',
     }
   },
   plugins: [],
