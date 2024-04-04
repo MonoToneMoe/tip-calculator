@@ -91,7 +91,7 @@ export default function Home() {
             <p className="text-sm text-header">Bill</p>
             <div className="flex items-center bg-input rounded-md py-2 px-4 border-2 border-invis hover:border-opacity-100 hover:border-amount">
               <img src={iconDollar.src} alt="dollar icon" />
-              <input className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(parseInt(e.target.value), people, tipAmount)} type="number" placeholder="0" id="billInput" />
+              <input onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()} className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(parseInt(e.target.value), people, tipAmount)} type="number" placeholder="0" id="billInput" />
             </div>
       
             <p className=" text-sm text-header mt-8">Select Tip %</p>
@@ -101,7 +101,7 @@ export default function Home() {
               <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 15)}>15%</button>
               <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 25)}>25%</button>
               <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 50)}>50%</button>
-              <input className="text-center text-inputText rounded-md text-2xl py-2 w-28" onChange={(e) => pageFunction(bill, people, parseInt(e.target.value))} type="number" placeholder="Custom" id="customTipInput" />
+              <input onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()} className="text-center text-inputText rounded-md text-2xl py-2 w-28" onChange={(e) => pageFunction(bill, people, parseInt(e.target.value))} type="number" placeholder="Custom" id="customTipInput" />
             </div>
             <div className="mt-8 flex justify-between">
               <p className="text-sm text-header">Number of People</p>
@@ -110,7 +110,7 @@ export default function Home() {
             
             <div className="flex items-center bg-input rounded-md py-2 px-4 border-2 border-invis hover:border-opacity-100 hover:border-amount" id="peopleDiv">
               <img src={iconPerson.src} alt="dollar icon" />
-              <input className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(bill, parseInt(e.target.value), tipPercent)} type="number" placeholder="0" id="peopleInput" />
+              <input onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()} className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(bill, parseInt(e.target.value), tipPercent)} type="number" placeholder="0" id="peopleInput" />
             </div>
           </div>
           <div className="bg-button rounded-md p-8 flex flex-col justify-between">
