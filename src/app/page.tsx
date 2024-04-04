@@ -6,62 +6,78 @@ import iconPerson from "@/app/assets/images/icon-person.svg";
 import { useState } from "react";
 
 export default function Home() {
-  const [bill, setBill] = useState<number>(0);
-  const [people, setPeople] = useState<number>(0);
+  const [bill, setBill] = useState<number>();
+  const [people, setPeople] = useState<number>();
   const [tipAmount, setTipAmount] = useState<number>();
   const [totalAmount, setTotalAmount] = useState<number>();
-  const [customTipPercent, setCustomTipPercent] = useState<number>();
+  const [tipPercent, setTipPercent] = useState<number>();
+  const [peopleError, setPeopleError] = useState<string>();
 
-  const pageFunction = (billNum: number, peopleNum: number, tipPercentNum: number) => {
-    setBill(billNum);
-    setPeople(peopleNum);
-    setTipAmount(tipPercentNum);
-
-    if (bill !== undefined && people !== undefined && tipAmount !== undefined) {
-      let tipDecimal = tipAmount / 100;
-      setTotalAmount(bill * tipDecimal)
-      setTipAmount((bill * tipDecimal) / people)
-    }
+  const pageFunction = (billNum: number | undefined, peopleNum: number | undefined, tipPercentNum: number | undefined) => {
+    const billValue = billNum !== undefined ? billNum : 0;
+    const peopleValue = peopleNum !== undefined ? peopleNum : 0;
+    const tipPercentValue = tipPercentNum !== undefined ? tipPercentNum : 0;
   
-  }
+    setBill(billValue);
+    setPeople(peopleValue);
+    setTipPercent(tipPercentValue);
+  
+    if (billValue !== undefined && peopleValue !== undefined && tipPercentValue !== undefined && tipPercentValue !== 0 && peopleValue !== 0) {
+      let tipDecimal = tipPercentValue / 100;
+      let tipAmountResult = (billValue * tipDecimal) / peopleValue;
+      let totalAmountResult = (billValue + tipAmountResult) / peopleValue;
+      
+      if (!isNaN(tipAmountResult) && !isNaN(totalAmountResult)) {
+        setTotalAmount(Math.round(totalAmountResult * 100) / 100);
+        setTipAmount(Math.round(tipAmountResult * 100) / 100);
+      } else {
+        setTotalAmount(0);
+        setTipAmount(0);
+      }
 
-  const handleBill = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value);
-    setBill(isNaN(value) ? 0 : value);
-  }
-
-  const handlePeople = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = await parseInt(event.target.value);
-    await setPeople(undefined == value ? 1 : value);
-
-    if (customTipPercent !== undefined && customTipPercent > 0) {
-      await handleCustomPercent(customTipPercent);
+      const resetButton = document.getElementById('resetButton');
+      if(resetButton) {
+        resetButton.className = "bg-amount hover:bg-body text-button hover:text-button w-full py-3 rounded-md"
+      }
     }
-  }
 
-  const handlePercent = (percent: number) => {
-    let tip
-    if(people && Number(people > 0)) {
-      tip = (bill * percent) / people;
+    if (peopleNum == 0) {
+      setPeopleError(`Can't be zero`)
+      const peopleDiv = document.getElementById('peopleDiv');
+      if (peopleDiv) {
+        peopleDiv.className = "flex items-center bg-input rounded-md py-2 px-4 border-2 border-invis border-opacity-100 border-warning";
+      }
     } else {
-      tip = bill * percent
+      setPeopleError('')
+      const peopleDiv = document.getElementById('peopleDiv');
+      if (peopleDiv) {
+        peopleDiv.className = "flex items-center bg-input rounded-md py-2 px-4 border-2 border-invis hover:border-opacity-100 hover:border-amount";
+      }
     }
-    let total = (bill * percent);
-    setTipAmount(tip);
-    setTotalAmount(total);
   }
-  const handleCustomPercent = (percent: number) => {
-    setCustomTipPercent(percent);
-    percent = percent / 100
-    let tip;
-    if(people && Number(people > 0)) {
-      tip = (bill * percent) / people;
-    } else {
-      tip = bill * percent
+
+
+  const clearInfo = () => {
+    setBill(undefined);
+    setPeople(undefined);
+    setTipPercent(undefined);
+    setTipAmount(undefined);
+    setTotalAmount(undefined);
+    
+    let billInput = document.getElementById('billInput') as HTMLInputElement;
+    let peopleInput = document.getElementById('peopleInput') as HTMLInputElement;
+    let customTipInput = document.getElementById('customTipInput') as HTMLInputElement;
+
+    if(billInput && peopleInput && customTipInput) {
+      billInput.value = '';
+      peopleInput.value = '';
+      customTipInput.value = '';
     }
-    let total = (bill * percent);
-    setTipAmount(tip);
-    setTotalAmount(total);
+
+    const resetButton = document.getElementById('resetButton');
+      if(resetButton) {
+        resetButton.className = "bg-header hover:bg-body text-button hover:text-button w-full py-3 rounded-md"
+      }
   }
 
   return (
@@ -71,38 +87,42 @@ export default function Home() {
       </div>
       <div className="flex justify-center items-center bg-container p-8 rounded-2xl">
         <div className="grid grid-cols-2 gap-8">
-          <div>
+          <div className="p-4">
             <p className="text-sm text-header">Bill</p>
-            <div className="flex items-center bg-input rounded-sm py-2 px-4">
+            <div className="flex items-center bg-input rounded-md py-2 px-4 border-2 border-invis hover:border-opacity-100 hover:border-amount">
               <img src={iconDollar.src} alt="dollar icon" />
-              <input className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={handleBill} type="number" placeholder="0" />
+              <input className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(parseInt(e.target.value), people, tipAmount)} type="number" placeholder="0" id="billInput" />
             </div>
       
-            <p className=" text-sm text-header">Select Tip %</p>
+            <p className=" text-sm text-header mt-8">Select Tip %</p>
             <div className="grid grid-cols-3 gap-4 mt-4">
-              <button className="text-center bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => handlePercent(0.05)}>5%</button>
-              <button className="text-center bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => handlePercent(0.1)}>10%</button>
-              <button className="text-center bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => handlePercent(0.15)}>15%</button>
-              <button className="text-center bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => handlePercent(0.25)}>25%</button>
-              <button className="text-center bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => handlePercent(0.5)}>50%</button>
-              <input className="text-center rounded-md text-2xl py-2 w-28" onChange={(e) => handleCustomPercent(parseInt(e.target.value))} type="number" placeholder="Custom" />
+              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 5)}>5%</button>
+              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 10)}>10%</button>
+              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 15)}>15%</button>
+              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 25)}>25%</button>
+              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 50)}>50%</button>
+              <input className="text-center text-inputText rounded-md text-2xl py-2 w-28" onChange={(e) => pageFunction(bill, people, parseInt(e.target.value))} type="number" placeholder="Custom" id="customTipInput" />
             </div>
-            <p className="text-sm text-header">Number of People</p>
-            <div className="flex items-center bg-input rounded-sm py-2 px-4">
+            <div className="mt-8 flex justify-between">
+              <p className="text-sm text-header">Number of People</p>
+              <p className="text-sm text-warning">{peopleError}</p>
+            </div>
+            
+            <div className="flex items-center bg-input rounded-md py-2 px-4 border-2 border-invis hover:border-opacity-100 hover:border-amount" id="peopleDiv">
               <img src={iconPerson.src} alt="dollar icon" />
-              <input className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={handlePeople} type="number" placeholder="0" />
+              <input className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(bill, parseInt(e.target.value), tipPercent)} type="number" placeholder="0" id="peopleInput" />
             </div>
           </div>
           <div className="bg-button rounded-md p-8 flex flex-col justify-between">
             <div>
-              <div className="flex justify-between">
+              <div className="flex justify-between mt-2">
                 <div>
                   <p className=" text-container">Tip Amount</p>
                   <p className="text-header">/ person</p>
                 </div>
                 <p className="text-5xl text-amount">${tipAmount ? tipAmount : "0.00"}</p>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mt-10">
                 <div>
                   <p className="text-container">Total</p>
                   <p className="text-header">/ person</p>
@@ -111,7 +131,7 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <button className="bg-header w-full">Reset</button>
+              <button id="resetButton" className="bg-header hover:bg-body text-button hover:text-button w-full py-3 rounded-md" onClick={clearInfo}>Reset</button>
             </div>
           </div>
         </div>
