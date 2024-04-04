@@ -12,21 +12,22 @@ export default function Home() {
   const [totalAmount, setTotalAmount] = useState<number>();
   const [tipPercent, setTipPercent] = useState<number>();
   const [peopleError, setPeopleError] = useState<string>();
+  const [activeButton, setActiveButton] = useState<number | null>(null);;
 
   const pageFunction = (billNum: number | undefined, peopleNum: number | undefined, tipPercentNum: number | undefined) => {
     const billValue = billNum !== undefined ? billNum : 0;
     const peopleValue = peopleNum !== undefined ? peopleNum : 0;
     const tipPercentValue = tipPercentNum !== undefined ? tipPercentNum : 0;
-  
+
     setBill(billValue);
     setPeople(peopleValue);
     setTipPercent(tipPercentValue);
-  
+
     if (billValue !== undefined && peopleValue !== undefined && tipPercentValue !== undefined && tipPercentValue !== 0 && peopleValue !== 0) {
       let tipDecimal = tipPercentValue / 100;
       let tipAmountResult = (billValue * tipDecimal) / peopleValue;
       let totalAmountResult = (billValue + tipAmountResult) / peopleValue;
-      
+
       if (!isNaN(tipAmountResult) && !isNaN(totalAmountResult)) {
         setTotalAmount(Math.round(totalAmountResult * 100) / 100);
         setTipAmount(Math.round(tipAmountResult * 100) / 100);
@@ -36,7 +37,7 @@ export default function Home() {
       }
 
       const resetButton = document.getElementById('resetButton');
-      if(resetButton) {
+      if (resetButton) {
         resetButton.className = "bg-amount hover:bg-body text-button hover:text-button w-full py-3 rounded-md"
       }
     }
@@ -63,21 +64,21 @@ export default function Home() {
     setTipPercent(undefined);
     setTipAmount(undefined);
     setTotalAmount(undefined);
-    
+
     let billInput = document.getElementById('billInput') as HTMLInputElement;
     let peopleInput = document.getElementById('peopleInput') as HTMLInputElement;
     let customTipInput = document.getElementById('customTipInput') as HTMLInputElement;
 
-    if(billInput && peopleInput && customTipInput) {
+    if (billInput && peopleInput && customTipInput) {
       billInput.value = '';
       peopleInput.value = '';
       customTipInput.value = '';
     }
 
     const resetButton = document.getElementById('resetButton');
-      if(resetButton) {
-        resetButton.className = "bg-header hover:bg-body text-button hover:text-button w-full py-3 rounded-md"
-      }
+    if (resetButton) {
+      resetButton.className = "bg-header hover:bg-body text-button hover:text-button w-full py-3 rounded-md"
+    }
   }
 
   return (
@@ -93,21 +94,21 @@ export default function Home() {
               <img src={iconDollar.src} alt="dollar icon" />
               <input onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()} className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(parseInt(e.target.value), people, tipAmount)} type="number" placeholder="0" id="billInput" />
             </div>
-      
+
             <p className=" text-sm text-header mt-8">Select Tip %</p>
             <div className="grid grid-cols-3 gap-4 mt-4">
-              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 5)}>5%</button>
-              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 10)}>10%</button>
-              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 15)}>15%</button>
-              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 25)}>25%</button>
-              <button className="text-center hover:bg-amount hover:text-button bg-button rounded-md text-button-text text-2xl py-2 w-28" onClick={() => pageFunction(bill, people, 50)}>50%</button>
-              <input onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()} className="text-center text-inputText rounded-md text-2xl py-2 w-28" onChange={(e) => pageFunction(bill, people, parseInt(e.target.value))} type="number" placeholder="Custom" id="customTipInput" />
+              <button className={`text-center hover:bg-amount hover:text-button ${activeButton === 5 ? "bg-amount" : "bg-button" } rounded-md text-button-text text-2xl py-2 w-28`} onClick={() => { pageFunction(bill, people, 5); setActiveButton(5); }}>5%</button>
+              <button className={`text-center hover:bg-amount hover:text-button ${activeButton === 10 ? "bg-amount" : "bg-button" } rounded-md text-button-text text-2xl py-2 w-28`} onClick={() => { pageFunction(bill, people, 10); setActiveButton(10); }}>10%</button>
+              <button className={`text-center hover:bg-amount hover:text-button ${activeButton === 15 ? "bg-amount" : "bg-button" } rounded-md text-button-text text-2xl py-2 w-28`} onClick={() => { pageFunction(bill, people, 15); setActiveButton(15); }}>15%</button>
+              <button className={`text-center hover:bg-amount hover:text-button ${activeButton === 25 ? "bg-amount" : "bg-button" } rounded-md text-button-text text-2xl py-2 w-28`} onClick={() => { pageFunction(bill, people, 25); setActiveButton(25); }}>25%</button>
+              <button className={`text-center hover:bg-amount hover:text-button ${activeButton === 50 ? "bg-amount text-button" : "bg-button text-button-text" } rounded-md text-2xl py-2 w-28`} onClick={() => { pageFunction(bill, people, 50); setActiveButton(50); }}>50%</button>
+              <input onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()} className="text-right px-2 text-inputText rounded-md text-2xl py-2 w-28 focus:outline-amount caret-amount placeholder:text-center" onChange={(e) => { pageFunction(bill, people, parseInt(e.target.value)), setActiveButton(null) }} type="number" placeholder="Custom" id="customTipInput" />
             </div>
             <div className="mt-8 flex justify-between">
               <p className="text-sm text-header">Number of People</p>
               <p className="text-sm text-warning">{peopleError}</p>
             </div>
-            
+
             <div className="flex items-center bg-input rounded-md py-2 px-4 border-2 border-invis hover:border-opacity-100 hover:border-amount" id="peopleDiv">
               <img src={iconPerson.src} alt="dollar icon" />
               <input onKeyDown={(evt) => ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()} className="text-right text-inputText bg-invis outline-none rounded-r-sm text-2xl placeholder-inputPlaceholder w-full" onChange={(e) => pageFunction(bill, parseInt(e.target.value), tipPercent)} type="number" placeholder="0" id="peopleInput" />
