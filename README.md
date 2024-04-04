@@ -1,3 +1,11 @@
+George
+4/4/2024
+Tip Calculator
+I created two functions, one to read your inputs and outputs the calculations of the data
+Peer Reviewed by: Ellie
+Peer Review: 
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
